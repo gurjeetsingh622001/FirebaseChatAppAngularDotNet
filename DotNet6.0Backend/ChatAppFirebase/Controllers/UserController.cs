@@ -1,6 +1,7 @@
 ﻿using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Services.fbInterface;
+using Services.RequestDto;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -16,9 +17,10 @@ namespace ChatAppFirebase.Controllers
             _fbUserServices = _fbUserService;
         }
         [HttpPost]
-        public Task<UserRecord> CreateUser(string user)
+        public Task<UserRecord> CreateUser(UserRequestDto user)
         {
-            return _fbUserServices.CreateUser(user);
+            var user_ =  _fbUserServices.CreateUser(user);
+            return user_;
         }
     }
 }

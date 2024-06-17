@@ -7,26 +7,62 @@ using System.Threading.Tasks;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using FirebaseAdmin.Auth;
+using Services.RequestDto;
+using Google.Cloud.Firestore;
 
 namespace Services.fbServices
 {
     public class fbUserServices : IfbUserServices
     {
-        FirebaseApp _firebaseApp;
+        FirestoreDb db;
         public fbUserServices() {
-            
+             db = FirestoreDb.Create("webapichatapp");
+
         }
-        public async Task<UserRecord> CreateUser(string username)
+        public async Task<UserRecord> CreateUser(UserRequestDto user)
         {
             try
             {
                 UserRecordArgs args = new UserRecordArgs()
                 {
-                    Email = "user@example.com",
+                    Email = user.Email,
                     EmailVerified = false,
-                    PhoneNumber = "+11234567890",
-                    Password = "secretPassword",
-                    DisplayName = "John Doe",
+                    PhoneNumber = user.PhoneNumber,
+                    Password = user.Password,
+                    DisplayName = user.DisplayName,
+                    PhotoUrl = "http://www.example.com/12345678/photo.png",
+                    Disabled = false,
+                };
+
+                var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(args);
+                var userDetails = await AddUserDetails(user);
+                Console.WriteLine($"Successfully created new user: {userRecord.Uid}");
+                return userRecord;
+            }
+            catch (FirebaseAuthException ex)
+            {
+                throw new Exception("Error creating user in Firebase Authentication.", ex);
+            }
+        }
+        public async Task<UserRecord> AddUserDetails(UserRequestDto user)
+        {
+            try
+            {
+                DocumentReference docRef = db.Collection("cities").Document("LA");
+                Dictionary<string, object> city = new Dictionary<string, object>
+                                                  {
+                                                      { "name", "Los Angeles" },
+                                                      { "state", "CA" },
+                                                      { "country", "USA" }
+                                                  };
+                await docRef.SetAsync(city);
+                UserRecordArgs args = new UserRecordArgs()
+                {
+                    Email = user.Email,
+                    EmailVerified = false,
+                    PhoneNumber = user.PhoneNumber,
+                    Password = user.Password,
+                    DisplayName = user.DisplayName,
                     PhotoUrl = "http://www.example.com/12345678/photo.png",
                     Disabled = false,
                 };
@@ -41,7 +77,7 @@ namespace Services.fbServices
             }
         }
 
-        public bool DeleteUsers(string username)
+            public bool DeleteUsers(string username)
         {
             return true;
             throw new NotImplementedException();

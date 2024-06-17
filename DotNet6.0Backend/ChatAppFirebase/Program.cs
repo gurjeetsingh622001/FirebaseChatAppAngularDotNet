@@ -4,15 +4,17 @@ using Microsoft.Extensions.Hosting;
 using Services.fbInterface;
 using Services.fbServices;
 using System.Net;
+using Services.AdminSeed;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //FireBase
-var credential = GoogleCredential.FromFile("D:\\github\\webapichatapp-firebase-adminsdk-8soov-34b03737a7.json");
+var credential = GoogleCredential.FromFile("D:\\github\\webapichatapp-firebase-adminsdk-8soov-39d2a837d8.json");
 var _firebaseApp = FirebaseApp.Create(new AppOptions
 {
     Credential = credential
 });
+AdminSeed.createAdmin().Wait();
 
 //FirebaseApp.Create(new AppOptions()
 //{
