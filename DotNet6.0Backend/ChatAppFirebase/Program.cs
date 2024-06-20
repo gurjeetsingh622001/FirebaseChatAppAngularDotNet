@@ -25,6 +25,7 @@ AdminSeed.createAdmin().Wait();
 builder.Services.AddControllers();
 //Services
 builder.Services.AddScoped<IfbUserServices, fbUserServices>();
+builder.Services.AddScoped<IfbAuthService, fbAuthService>();
 //Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
