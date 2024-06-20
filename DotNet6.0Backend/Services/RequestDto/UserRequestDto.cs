@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Google.Cloud.Firestore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -46,17 +47,55 @@ namespace Services.RequestDto
 
         public bool IsActive { get; set; } = true;
 
-        [DataType(DataType.DateTime)]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [DataType(DataType.DateTime)]
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
 
     }
     public enum Role {
         admin = 1,
         user = 2,
+    }
+    [FirestoreData]
+    public class UserDetailDto
+    {
+        [FirestoreProperty]
+        [Required]
+        public string? PhotoUrl { get; set; }
+        [FirestoreProperty]
+        [Required]
+        public string? FirstName { get; set; }
+        [FirestoreProperty]
+        [Required]
+        public string? LastName { get; set; }
+        [FirestoreProperty]
+        [Required]
+        [FirestoreDocumentReadTimestamp]
+        public Timestamp DateOfBirth { get; set; }
+        [FirestoreProperty]
+        [Required]
+        public string? Address { get; set; }
+        [FirestoreProperty]
+        [Required]
+        public Role? Role { get; set; }
+        [FirestoreProperty]
+        [Required]
+        public bool IsActive { get; set; } = true;
+        //private DateTime createdAt;
+        //[FirestoreProperty]
+        //[Required]
+        //public DateTime CreatedAt
+        //{
+        //    get => createdAt;
+        //    set => createdAt = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        //}
+
+        //private DateTime updatedAt;
+        //[FirestoreProperty]
+        //[Required]
+        //public DateTime UpdatedAt
+        //{
+        //    get => updatedAt;
+        //    set => updatedAt = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        //}
+
     }
 
 }

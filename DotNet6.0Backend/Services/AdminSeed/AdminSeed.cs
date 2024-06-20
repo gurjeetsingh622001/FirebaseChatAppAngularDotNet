@@ -35,8 +35,6 @@ namespace Services.AdminSeed
                     Address = "123 Main Street, Anytown, USA",
                     Role = Role.admin,
                     IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
                 };
                 try
                 {

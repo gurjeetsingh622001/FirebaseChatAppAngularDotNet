@@ -35,7 +35,7 @@ namespace Services.fbServices
                 };
 
                 var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(args);
-                var userDetails = await AddUserDetails(user);
+                var userDetails = await AddUserDetails(user,userRecord.Uid);
                 Console.WriteLine($"Successfully created new user: {userRecord.Uid}");
                 return userRecord;
             }
@@ -44,34 +44,25 @@ namespace Services.fbServices
                 throw new Exception("Error creating user in Firebase Authentication.", ex);
             }
         }
-        public async Task<UserRecord> AddUserDetails(UserRequestDto user)
+        public async Task<WriteResult> AddUserDetails(UserRequestDto user ,string UserUid)
         {
             try
             {
-                DocumentReference docRef = db.Collection("cities").Document("LA");
-                Dictionary<string, object> city = new Dictionary<string, object>
-                                                  {
-                                                      { "name", "Los Angeles" },
-                                                      { "state", "CA" },
-                                                      { "country", "USA" }
-                                                  };
-                await docRef.SetAsync(city);
-                UserRecordArgs args = new UserRecordArgs()
+                DocumentReference UserDetailsDocRef = db.Collection("UserDetails").Document(UserUid);
+                UserDetailDto userDetail = new UserDetailDto
                 {
-                    Email = user.Email,
-                    EmailVerified = false,
-                    PhoneNumber = user.PhoneNumber,
-                    Password = user.Password,
-                    DisplayName = user.DisplayName,
-                    PhotoUrl = "http://www.example.com/12345678/photo.png",
-                    Disabled = false,
+                    PhotoUrl = user.PhotoUrl,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    DateOfBirth = Timestamp.FromDateTime(DateTime.SpecifyKind(user.DateOfBirth, DateTimeKind.Utc)),
+                    Address = user.Address,
+                    Role = user.Role,
+                    IsActive = user.IsActive,
                 };
-
-                var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(args);
-                Console.WriteLine($"Successfully created new user: {userRecord.Uid}");
-                return userRecord;
+                WriteResult result = await UserDetailsDocRef.SetAsync(userDetail);
+                return result;
             }
-            catch (FirebaseAuthException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Error creating user in Firebase Authentication.", ex);
             }
